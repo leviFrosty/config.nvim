@@ -1,3 +1,6 @@
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
+
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -5,7 +8,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -147,6 +150,18 @@ vim.opt.rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
+  {
+    'akinsho/toggleterm.nvim',
+    version = '*',
+    opts = {},
+    config = function()
+      require('toggleterm').setup {
+        size = 30,
+        open_mapping = [[<C-S-j>]],
+      }
+      vim.keymap.set('n', '<C-S-j>', '<cmd>lua require("toggleterm").toggle()<CR>', { desc = 'Toggle terminal' })
+    end,
+  },
 
   { -- Autoformat
     'stevearc/conform.nvim',
@@ -181,14 +196,16 @@ require('lazy').setup({
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
         -- javascript = { { "prettierd", "prettier" } },
-        javascript = { { 'prettierd' } },
-        typescript = { { 'prettierd' } },
-        json = { { 'prettierd' } },
-        html = { { 'prettierd' } },
-        css = { { 'prettierd' } },
-        scss = { { 'prettierd' } },
-        markdown = { { 'prettierd' } },
-        yaml = { { 'prettierd' } },
+        javascript = { { 'prettier' } },
+        javascriptreact = { { 'prettier' } },
+        typescript = { { 'prettier' } },
+        typescriptreact = { { 'prettier' } },
+        json = { { 'prettier' } },
+        html = { { 'prettier' } },
+        css = { { 'prettier' } },
+        scss = { { 'prettier' } },
+        markdown = { { 'prettier' } },
+        yaml = { { 'prettier' } },
       },
     },
   },
