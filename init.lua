@@ -1,5 +1,6 @@
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
+vim.opt.linespace = 4
 
 -- Set <space> as the leader key
 -- See `:help mapleader`
@@ -60,7 +61,7 @@ vim.opt.splitbelow = true
 --  See `:help 'list'`
 --  and `:help 'listchars'`
 vim.opt.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+vim.opt.listchars = { tab = '  ', trail = '·', nbsp = '␣' }
 
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'
@@ -83,6 +84,8 @@ vim.keymap.set('n', '<leader>w', ':w<CR>', { desc = '[W]rite File' })
 vim.keymap.set('n', '<leader>q', ':bdelete<CR>', { desc = '[Q]uit File' })
 vim.keymap.set('n', '<S-h>', ':bprev<CR>', { desc = 'Prev Buffer' })
 vim.keymap.set('n', '<S-l>', ':bnext<CR>', { desc = 'Next Buffer' })
+vim.keymap.set('n', '<S-k>', ':m -2<CR>', { desc = 'Move current line down' })
+vim.keymap.set('n', '<S-j>', ':m +1<CR>', { desc = 'Move current line up' })
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
@@ -396,10 +399,10 @@ require('lazy').setup({
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>f', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>f', builtin.live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-      vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
@@ -714,6 +717,7 @@ require('lazy').setup({
           ['<C-p>'] = cmp.mapping.select_prev_item(),
           ['<C-b>'] = cmp.mapping.scroll_docs(-4),
           ['<C-f>'] = cmp.mapping.scroll_docs(4),
+          ['<CR>'] = nil,
 
           -- Accept ([y]es) the completion.
           --  This will auto-import if your LSP supports it.
