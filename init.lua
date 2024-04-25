@@ -157,14 +157,6 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
 
   {
-    'APZelos/blamer.nvim',
-    version = '*',
-    config = function()
-      vim.cmd 'BlamerToggle'
-    end,
-  },
-
-  {
     'windwp/nvim-autopairs',
     event = 'InsertEnter',
     config = true,
@@ -301,6 +293,10 @@ require('lazy').setup({
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
       },
+      current_line_blame_formatter_opts = {
+        relative_time = true,
+      },
+      current_line_blame = true,
     },
   },
 
