@@ -1,12 +1,22 @@
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.linespace = 4
+vim.opt.wrap = false
 
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
+
+-- NOTE: Levi's keybinds
+vim.keymap.set('n', '<Leader>w', ':w<CR>', { desc = '[W]rite File' })
+vim.keymap.set('n', '<Leader>q', ':bdelete<CR>', { desc = '[Q]uit File' })
+vim.keymap.set('n', '<S-h>', ':bprev<CR>', { desc = 'Prev Buffer' })
+vim.keymap.set('n', '<S-l>', ':bnext<CR>', { desc = 'Next Buffer' })
+vim.keymap.set('n', '<S-k>', ':m -2<CR>', { desc = 'Move current line down' })
+vim.keymap.set('n', '<S-j>', ':m +1<CR>', { desc = 'Move current line up' })
+vim.keymap.set('n', '<C-b>', ':NvimTreeToggle<CR>', { desc = 'Toggle NvimTree' })
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
@@ -79,14 +89,6 @@ vim.opt.scrolloff = 10
 vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
--- NOTE: Levi's keybinds
-vim.keymap.set('n', '<leader>w', ':w<CR>', { desc = '[W]rite File' })
-vim.keymap.set('n', '<leader>q', ':bdelete<CR>', { desc = '[Q]uit File' })
-vim.keymap.set('n', '<S-h>', ':bprev<CR>', { desc = 'Prev Buffer' })
-vim.keymap.set('n', '<S-l>', ':bnext<CR>', { desc = 'Next Buffer' })
-vim.keymap.set('n', '<S-k>', ':m -2<CR>', { desc = 'Move current line down' })
-vim.keymap.set('n', '<S-j>', ':m +1<CR>', { desc = 'Move current line up' })
-
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
@@ -153,19 +155,47 @@ vim.opt.rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
+
   {
-    'akinsho/toggleterm.nvim',
+    'APZelos/blamer.nvim',
     version = '*',
-    opts = {},
     config = function()
-      require('toggleterm').setup {
-        size = 30,
-        open_mapping = [[<C-S-j>]],
-      }
-      vim.keymap.set('n', '<C-S-j>', '<cmd>lua require("toggleterm").toggle()<CR>', { desc = 'Toggle terminal' })
+      vim.cmd 'BlamerToggle'
     end,
   },
 
+  {
+    'windwp/nvim-autopairs',
+    event = 'InsertEnter',
+    config = true,
+    -- use opts = {} for passing setup options
+    -- this is equalent to setup({}) function
+  },
+
+  {
+    'nvim-tree/nvim-tree.lua',
+    version = '*',
+    lazy = true,
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
+    },
+    opts = {},
+  },
+
+  -- -- Toggle term
+  -- {
+  --   'akinsho/toggleterm.nvim',
+  --   version = '*',
+  --   opts = {},
+  --   config = function()
+  --     require('toggleterm').setup {
+  --       size = 30,
+  --       open_mapping = [[<C-S-j>]],
+  --     }
+  --     vim.keymap.set('n', '<C-S-j>', '<cmd>lua require("toggleterm").toggle()<CR>', { desc = 'Toggle terminal' })
+  --   end,
+  -- },
+  --
   { -- Autoformat
     'stevearc/conform.nvim',
     lazy = false,
@@ -226,16 +256,6 @@ require('lazy').setup({
         },
       }
     end,
-  },
-
-  -- Allows creating comments
-  -- NOTE: usage https://github.com/numToStr/Comment.nvim?tab=readme-ov-file#-usage
-  {
-    'numToStr/Comment.nvim',
-    opts = {
-      -- add any options here
-    },
-    lazy = false,
   },
 
   -- Github copilot
@@ -384,6 +404,13 @@ require('lazy').setup({
         --   },
         -- },
         -- pickers = {}
+        --
+        defaults = {
+          -- Set width to 95% of the editor window
+          horizontal = {
+            width = 0.95,
+          },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
