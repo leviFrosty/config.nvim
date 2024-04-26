@@ -17,6 +17,10 @@ vim.keymap.set('n', '<S-l>', ':bnext<CR>', { desc = 'Next Buffer' })
 vim.keymap.set('n', '<S-k>', ':m -2<CR>', { desc = 'Move current line down' })
 vim.keymap.set('n', '<S-j>', ':m +1<CR>', { desc = 'Move current line up' })
 vim.keymap.set('n', '<C-b>', ':NvimTreeToggle<CR>', { desc = 'Toggle NvimTree' })
+vim.keymap.set('n', '<leader>h', '<C-w>h', { desc = 'Move to window left' })
+vim.keymap.set('n', '<leader>k', '<C-w>k', { desc = 'Move to window above' })
+vim.keymap.set('n', '<leader>j', '<C-w>j', { desc = 'Move to window below' })
+vim.keymap.set('n', '<leader>l', '<C-w>l', { desc = 'Move to window right' })
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
@@ -157,37 +161,23 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
 
   {
-    'windwp/nvim-autopairs',
-    event = 'InsertEnter',
-    config = true,
-    -- use opts = {} for passing setup options
-    -- this is equalent to setup({}) function
-  },
-
-  {
     'nvim-tree/nvim-tree.lua',
     version = '*',
     lazy = true,
     dependencies = {
       'nvim-tree/nvim-web-devicons',
     },
-    opts = {},
+    config = function()
+      require('nvim-tree').setup {
+        filters = {
+          dotfiles = false,
+        },
+      }
+      local api = require 'nvim-tree.api'
+      api.tree.toggle_gitignore_filter()
+    end,
   },
 
-  -- -- Toggle term
-  -- {
-  --   'akinsho/toggleterm.nvim',
-  --   version = '*',
-  --   opts = {},
-  --   config = function()
-  --     require('toggleterm').setup {
-  --       size = 30,
-  --       open_mapping = [[<C-S-j>]],
-  --     }
-  --     vim.keymap.set('n', '<C-S-j>', '<cmd>lua require("toggleterm").toggle()<CR>', { desc = 'Toggle terminal' })
-  --   end,
-  -- },
-  --
   { -- Autoformat
     'stevearc/conform.nvim',
     lazy = false,
@@ -235,7 +225,7 @@ require('lazy').setup({
     },
   },
 
-  -- Buffers
+  -- Buffers (tabline)
   {
     'akinsho/bufferline.nvim',
     version = '*',
@@ -245,6 +235,22 @@ require('lazy').setup({
         options = {
           diagnostics = 'nvim_lsp',
           color_icons = true,
+          hover = {
+            enabled = true,
+            delay = 200,
+            reveal = { 'close' },
+          },
+          offsets = {
+            {
+              filetype = 'NvimTree',
+              text = 'File Explorer',
+              highlight = 'Directory',
+              separator = true, -- use a "true" to enable the default, or set your own character
+            },
+          },
+          show_buffer_close_icons = false,
+          tab_size = 16,
+          move_wraps_at_ends = true,
         },
       }
     end,
@@ -807,6 +813,38 @@ require('lazy').setup({
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
+  -- Auto closing JSX / HTML tags
+  {
+    'windwp/nvim-ts-autotag',
+    version = '*',
+    opts = {},
+  },
+
+  -- Indention visualizer
+  {
+    'lukas-reineke/indent-blankline.nvim',
+    main = 'ibl',
+
+    config = function()
+      require('ibl').setup {
+        scope = {
+          enabled = true,
+        },
+      }
+    end,
+  },
+
+  {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    opts = {
+      -- Set the theme to be used. Themes can be found in `lua/lualine/themes/`
+      theme = 'onedark',
+      -- Set the extensions to be used in the statusline
+      extensions = { 'nvim-tree' },
+    },
+  },
+
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
@@ -825,20 +863,12 @@ require('lazy').setup({
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
 
-      -- Simple and easy statusline.
-      --  You could remove this setup call if you don't like it,
-      --  and try some other statusline plugin
-      local statusline = require 'mini.statusline'
-      -- set use_icons to true if you have a Nerd Font
-      statusline.setup { use_icons = vim.g.have_nerd_font }
+      -- Auto Pairs
+      require('mini.pairs').setup()
 
-      -- You can configure sections in the statusline by overriding their
-      -- default behavior. For example, here we set the section for
-      -- cursor location to LINE:COLUMN
-      ---@diagnostic disable-next-line: duplicate-set-field
-      statusline.section_location = function()
-        return '%2l:%-2v'
-      end
+      require('mini.starter').setup {
+        autoopen = true,
+      }
 
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
@@ -848,7 +878,21 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'bash', 'c', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc' },
+      ensure_installed = {
+        'bash',
+        'c',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'vim',
+        'vimdoc',
+        'javascript',
+        'typescript',
+        'json',
+        'css',
+        'yaml',
+      },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
